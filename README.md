@@ -57,14 +57,14 @@ Layer Technology
 
 ---
 
-Frontend React + TypeScript
-Routing React Router v6
-Server State React Query
-HTTP Axios
-Styling Tailwind CSS
-UI Components shadcn/ui
-Auth JWT (HttpOnly Cookie) + CSRF
-Build Tool Vite
+- Frontend: React + TypeScript
+- Routing: React Router v6
+- Server State: React Query
+- HTTP call: Axios
+- Styling: Tailwind CSS
+- UI Components: shadcn/ui
+- Auth: JWT (HttpOnly Cookie) + CSRF
+- Build Tool: Vite
 
 ---
 
