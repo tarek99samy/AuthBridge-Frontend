@@ -4,6 +4,8 @@ import { Spinner } from './ui/spinner';
 import { useAuthStatus } from '@/hooks/useAuthStatus';
 import { getCsrfToken } from '@/api/auth.api';
 import { useAuthContext } from '@/hooks/useAuthContext';
+import { setCsrfTokenRef } from '@/store/auth-ref';
+import { toast } from 'sonner';
 
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { isAuthenticated, isLoading } = useAuthStatus();
@@ -15,12 +17,14 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
         .then((response) => {
           const { csrfToken } = response.data;
           setCsrfToken(csrfToken);
+          setCsrfTokenRef(csrfToken);
         })
         .catch((error) => {
-          console.error('Error fetching CSRF token:', error);
+          const errorMessage = error?.response?.data?.error?.message || (error as Error).message || 'please try again in a minute';
+          toast.error(`Could not fetch CSRF token: ${errorMessage}`);
         });
     }
-  }, []);
+  }, [isAuthenticated, setCsrfToken]);
 
   if (isLoading)
     return (
@@ -31,6 +35,7 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
     );
 
   if (!isAuthenticated) {
+    toast.error(`Could not fetch CSRF token`);
     return <Navigate to="/login" replace />;
   }
 

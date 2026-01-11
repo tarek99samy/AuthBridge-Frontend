@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { isFormComplete, securityQuestions } from '@/lib/utils';
 import { useAuthContext } from '@/hooks/useAuthContext';
+import { setCsrfTokenRef } from '@/store/auth-ref';
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function SignupPage() {
     onSuccess: (response) => {
       const { csrfToken } = response.data;
       setCsrfToken(csrfToken);
+      setCsrfTokenRef(csrfToken);
       toast.success(`Successfully signed up!`);
       setTimeout(() => navigate('/'), 500);
     },

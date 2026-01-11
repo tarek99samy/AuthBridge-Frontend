@@ -6,6 +6,7 @@ import { login } from '@/api/auth.api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/hooks/useAuthContext';
+import { setCsrfTokenRef } from '@/store/auth-ref';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function LoginPage() {
     onSuccess: (response) => {
       const { csrfToken } = response.data;
       setCsrfToken(csrfToken);
+      setCsrfTokenRef(csrfToken);
       toast.success(`Successfully logged in, welcome back!`);
       setTimeout(() => navigate('/'), 500);
     },

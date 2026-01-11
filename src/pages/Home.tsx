@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { logout } from '@/api/auth.api';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 
 export default function HomePage() {
@@ -18,11 +18,18 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-col items-center justify-center w-full p-4">
-      <NavigationMenu className="flex justify-end max-w-full w-full mb-8">
+      <NavigationMenu className="flex justify-center max-w-full w-full mb-8 p-10">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className="text-xl">
-              <Button onClick={() => mutate()} disabled={isPending} className="mt-4" variant="destructive">
+            <NavigationMenuLink asChild className="text-2xl">
+              <Button size="lg" className="mx-8">
+                <Link to="/profile">Profile</Link>
+              </Button>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild className="text-2xl">
+              <Button onClick={() => mutate()} disabled={isPending} variant="destructive" size="lg" className="mx-8">
                 Logout
               </Button>
             </NavigationMenuLink>
