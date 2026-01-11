@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getMe } from '@/api/auth.api';
 
-export function useAuth() {
+export function useAuthStatus() {
   const query = useQuery({
     queryKey: ['me'],
     queryFn: getMe,

@@ -1,3 +1,4 @@
+import type { SignupPayload } from '@/types/auth.types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -22,3 +23,12 @@ export const securityQuestions = [
   "What is your maternal grandfather's maiden name?",
   'What was the name of your first stuffed animal?',
 ];
+
+export function isFormComplete(form: SignupPayload | SignupPayload['verification']): boolean {
+  return Object.values(form).every((value) => {
+    if (typeof value === 'object' && value !== null) {
+      return isFormComplete(value);
+    }
+    return Boolean(value);
+  });
+}

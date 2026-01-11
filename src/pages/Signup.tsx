@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { AlertCircleIcon } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { signup } from '@/api/auth.api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { securityQuestions } from '@/lib/utils';
-import { AlertCircleIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { isFormComplete, securityQuestions } from '@/lib/utils';
+import { useAuthContext } from '@/hooks/useAuthContext';
 
 export default function SignupPage() {
+  const navigate = useNavigate();
+  const { setCsrfToken } = useAuthContext();
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -19,11 +23,20 @@ export default function SignupPage() {
       answer: '',
     },
   });
+  const formComplete = isFormComplete(form);
 
   const { mutate, isPending } = useMutation({
     mutationFn: signup,
-    onSuccess: () => {
-      alert('Account created');
+    onSuccess: (response) => {
+      const { csrfToken } = response.data;
+      setCsrfToken(csrfToken);
+      toast.success(`Successfully signed up!`);
+      setTimeout(() => navigate('/'), 500);
+    },
+    onError: (error) => {
+      setForm({ name: '', email: '', password: '', verification: { question: '', answer: '' } });
+      const errorMessage = error?.response?.data?.error?.message || (error as Error).message || 'Could not sign up with those data';
+      toast.error(errorMessage);
     },
   });
 
@@ -41,6 +54,10 @@ export default function SignupPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formComplete) {
+      toast.error('Please fill out all fields');
+      return;
+    }
     mutate(form);
   };
 
@@ -49,9 +66,9 @@ export default function SignupPage() {
       <form onSubmit={onSubmit} className="w-full max-w-md space-y-4 rounded-xl border p-6 shadow-sm">
         <h1 className="text-xl font-semibold text-center">Sign Up</h1>
 
-        <Input name="name" placeholder="Name" onChange={onChange} required />
-        <Input name="email" type="email" placeholder="Email" onChange={onChange} required />
-        <Input name="password" type="password" placeholder="Password" onChange={onChange} required />
+        <Input name="name" minLength={3} placeholder="Name (ex: John Doe)" onChange={onChange} required />
+        <Input name="email" type="email" placeholder="Email (ex: 4oT9d@example.com)" onChange={onChange} required />
+        <Input name="password" type="password" minLength={8} placeholder="Password" onChange={onChange} required />
         <Alert>
           <AlertCircleIcon />
           <AlertTitle>Password Requirements</AlertTitle>
@@ -99,7 +116,7 @@ export default function SignupPage() {
           </AlertDescription>
         </Alert>
 
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button type="submit" className="w-full" disabled={isPending || !formComplete}>
           {isPending ? 'Creating...' : 'Create Account'}
         </Button>
 

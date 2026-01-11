@@ -5,8 +5,8 @@ import HomePage from './pages/Home';
 import ProfilePage from './pages/Profile';
 import NotfoundPage from './pages/Notfound';
 import ResetPasswordPage from './pages/ResetPassword';
-import VerifyPage from './pages/Verify';
 import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 
 export const router = createBrowserRouter([
   {
@@ -19,19 +19,27 @@ export const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <LoginPage />,
+    element: (
+      <PublicRoute>
+        <LoginPage />
+      </PublicRoute>
+    ),
   },
   {
     path: '/signup',
-    element: <SignupPage />,
-  },
-  {
-    path: '/verify',
-    element: <VerifyPage />,
+    element: (
+      <PublicRoute>
+        <SignupPage />
+      </PublicRoute>
+    ),
   },
   {
     path: '/reset-password',
-    element: <ResetPasswordPage />,
+    element: (
+      <PublicRoute>
+        <ResetPasswordPage />
+      </PublicRoute>
+    ),
   },
   {
     path: '/profile',

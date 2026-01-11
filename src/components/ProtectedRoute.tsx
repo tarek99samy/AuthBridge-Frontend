@@ -1,10 +1,26 @@
+import { useEffect, type JSX } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
 import { Spinner } from './ui/spinner';
-import type { JSX } from 'react';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { getCsrfToken } from '@/api/auth.api';
+import { useAuthContext } from '@/hooks/useAuthContext';
 
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthStatus();
+  const { setCsrfToken } = useAuthContext();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getCsrfToken()
+        .then((response) => {
+          const { csrfToken } = response.data;
+          setCsrfToken(csrfToken);
+        })
+        .catch((error) => {
+          console.error('Error fetching CSRF token:', error);
+        });
+    }
+  }, []);
 
   if (isLoading)
     return (

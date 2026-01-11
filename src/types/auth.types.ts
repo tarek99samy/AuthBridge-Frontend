@@ -24,5 +24,11 @@ export type VerifyQuestionPayload = {
 
 export type ResetPasswordPayload = {
   email: string;
-  password: string;
+  newPassword: string;
 };
+
+export interface AuthContextType {
+  csrfToken: string | null;
+  setCsrfToken: (token: string | null) => void;
+  clearAuth: () => void;
+}
